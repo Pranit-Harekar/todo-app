@@ -1,0 +1,31 @@
+@TodoApi_HostAddress = https://localhost:7200
+
+###
+GET {{TodoApi_HostAddress}}/api/todoItems
+Accept: application/json
+
+###
+GET {{TodoApi_HostAddress}}/api/todoItems/1
+
+###
+POST {{TodoApi_HostAddress}}/api/todoItems
+Content-Type: application/json
+
+{
+  "id": 1,
+  "name": "feed fish",
+  "isComplete": false
+}
+
+###
+PUT {{TodoApi_HostAddress}}/api/todoItems/1
+Content-Type: application/json
+
+{
+  "id": 1,
+  "name": "eat apple",
+  "isComplete": true
+}
+
+###
+GET {{TodoApi_HostAddress}}/api/tasks/1
