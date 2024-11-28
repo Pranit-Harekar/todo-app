@@ -4,16 +4,20 @@ using TodoApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// -- Add services to the container
 
 builder.Services.AddControllers();
 
-builder.Services.AddDbContext<TodoContext>(opt => opt.UseInMemoryDatabase("TodoList"));
+var connectionString = Environment.GetEnvironmentVariable("DEFAULT_CONNECTION_STRING");
+builder.Services.AddDbContext<TodoContext>(x => x.UseSqlServer(connectionString));
 
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
+// -- Build app
+
 var app = builder.Build();
+
+// -- Middlewares
 
 app.UseRewriter(new RewriteOptions().AddRedirect("api/tasks/(.*)", "api/todoItems/$1"));
 
@@ -24,7 +28,6 @@ app.Use(async (context, next) =>
     Console.WriteLine($"[{context.Request.Method} {context.Request.Path} {DateTime.UtcNow}] Finished.");
 });
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
