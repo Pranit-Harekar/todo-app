@@ -1,4 +1,4 @@
-@TodoApi_HostAddress = http://localhost:7200
+@TodoApi_HostAddress = https://localhost:7200
 
 ###
 GET {{TodoApi_HostAddress}}/api/todoItems

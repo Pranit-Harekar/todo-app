@@ -6,11 +6,18 @@ services:
       context: .
       dockerfile: TodoApi/Dockerfile.dev
     ports:
-      - '${API_PORT}:8080'
+      - '${API_HTTP_PORT}:8080'
+      - '${API_HTTPS_PORT}:8081'
     depends_on:
       - db
     environment:
       - DEFAULT_CONNECTION_STRING=${DB_CONNECTION_STRING}
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=${CERT_PASSWORD}
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=${CERT_PATH}
+      - ASPNETCORE_URLS=https://+:8081;http://+:8080;
+      - ASPNETCORE_ENVIRONMENT=Development
+    volumes:
+      - ./TodoApi/https/TodoApi.pfx:/https/TodoApi.pfx
 
   db:
     image: mcr.microsoft.com/mssql/server:2022-latest
