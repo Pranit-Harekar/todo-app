@@ -1,10 +1,6 @@
-.PHONY: all build up down ps logs shell clean
+.PHONY: build up down db_migrate clean
 
-# Define the docker-compose command prefix
 DOCKER_COMPOSE = docker-compose -f docker-compose.dev.yml
-
-# Target to run all defined targets (optional)
-all: build up
 
 # Build the images defined in docker-compose.dev.yml
 build:
@@ -18,17 +14,9 @@ up:
 down:
 	$(DOCKER_COMPOSE) down
 
-# List all running containers
-ps:
-	$(DOCKER_COMPOSE) ps
-
-# Show logs for all running services
-logs:
-	$(DOCKER_COMPOSE) logs -f
-
-# Enter a bash shell in the first container (modify for specific container)
-shell:
-	$(DOCKER_COMPOSE) exec api bash
+# Apply database migrations
+db_migrate:
+	$(DOCKER_COMPOSE) up --abort-on-container-exit --exit-code-from migrations migrations
 
 # Remove all stopped containers, volumes, and networks
 clean:

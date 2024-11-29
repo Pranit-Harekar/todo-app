@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
   api:
     build:
@@ -11,7 +9,7 @@ services:
     depends_on:
       - db
     environment:
-      - DEFAULT_CONNECTION_STRING=${DB_CONNECTION_STRING}
+      - DB_CONNECTION_STRING
       - ASPNETCORE_Kestrel__Certificates__Default__Password=${CERT_PASSWORD}
       - ASPNETCORE_Kestrel__Certificates__Default__Path=${CERT_PATH}
       - ASPNETCORE_URLS=https://+:8081;http://+:8080;
@@ -19,13 +17,27 @@ services:
     volumes:
       - ./TodoApi/https/TodoApi.pfx:/https/TodoApi.pfx
 
+  migrations:
+    build:
+      context: .
+      dockerfile: TodoApi/Dockerfile.dev
+      target: migrations
+    environment:
+      - DB_CONNECTION_STRING
+    depends_on:
+      db:
+        condition: service_healthy
+
   db:
     image: mcr.microsoft.com/mssql/server:2022-latest
+    platform: linux/amd64
     environment:
       - ACCEPT_EULA=y
       - MSSQL_SA_PASSWORD=${DB_PASSWORD}
     ports:
       - '${DB_PORT}:${DB_PORT}'
+    healthcheck:
+      test: timeout 1 bash -c 'cat < /dev/null > /dev/tcp/127.0.0.1/${DB_PORT}'
     volumes:
       - db-data:/var/opt/mssql
 

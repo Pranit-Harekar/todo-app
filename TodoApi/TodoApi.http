@@ -12,7 +12,6 @@ POST {{TodoApi_HostAddress}}/api/todoItems
 Content-Type: application/json
 
 {
-  "id": 1,
   "name": "feed fish",
   "isComplete": false
 }

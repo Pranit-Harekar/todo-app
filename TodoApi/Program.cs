@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
-var connectionString = Environment.GetEnvironmentVariable("DEFAULT_CONNECTION_STRING");
+var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
 builder.Services.AddDbContext<TodoContext>(x => x.UseSqlServer(connectionString));
 
 builder.Services.AddOpenApi();

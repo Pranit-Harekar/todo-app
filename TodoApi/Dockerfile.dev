@@ -1,26 +1,21 @@
-# Define a build stage using the .NET SDK image
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build-stage
-
-# Set the working directory for the build stage
+# --- build stage ---
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /app
-
-# Copy the current project directory to the working directory
 COPY . ./
-
-# Restore dependencies for the project
 RUN dotnet restore
-
-# Publish the application in Release configuration with output directory 'out'
 RUN dotnet publish -c Release -o out
 
-# Define a runtime stage using the .NET ASP.NET image
-FROM mcr.microsoft.com/dotnet/aspnet:9.0
-
-# Set the working directory for the runtime stage
+# --- migrations stage ---
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS migrations
 WORKDIR /app
+COPY . ./
+RUN dotnet restore
+RUN dotnet tool install --global dotnet-ef
+ENV PATH="$PATH:/root/.dotnet/tools"
+ENTRYPOINT dotnet ef database update --project TodoApi --connection "$DB_CONNECTION_STRING"
 
-# Copy the published application from the build stage to the working directory
-COPY --from=build-stage /app/out .
-
-# Set the entrypoint for the container to run the application
+# --- final stage ---
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
+WORKDIR /app
+COPY --from=build /app/out .
 ENTRYPOINT ["dotnet", "TodoApi.dll"]
