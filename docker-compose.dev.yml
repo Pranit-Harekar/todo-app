@@ -15,7 +15,7 @@ services:
       - ASPNETCORE_URLS=https://+:8081;http://+:8080;
       - ASPNETCORE_ENVIRONMENT=Development
     volumes:
-      - ./TodoApi/https/TodoApi.pfx:/https/TodoApi.pfx
+      - ./TodoApi${CERT_PATH}:${CERT_PATH}
 
   migrations:
     build:

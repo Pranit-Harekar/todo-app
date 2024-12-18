@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.OpenApi;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.EntityFrameworkCore;
 using TodoApi.Models;
@@ -31,7 +32,12 @@ app.Use(async (context, next) =>
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/openapi/v1.json", "v1");
+    });
 }
+
 
 app.UseDefaultFiles();
 
